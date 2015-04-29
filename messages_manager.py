@@ -13,6 +13,12 @@ class Aggregate:
         self.targetpath = targetpath
         self.origpaths = origpaths
 
+    def __str__(self):
+        return "Aggregate target='%s', paths='%s'" %(self.targetpath, self.origpaths,)
+
+    def __repr__(self):
+        return "Aggregate target='%s', paths='%s'" %(self.targetpath, self.origpaths,)
+
 class MessagesManager:
     """
     Aggregates and splits message files according to given list of Aggregate objects.
