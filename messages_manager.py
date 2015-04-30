@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
-#
-# Handles aggregation of messages* files from a given list of repositories
+"""
+Handles aggregation of messages* files from a given list of repositories
+"""
 
 import string, sys, os
 
