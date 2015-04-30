@@ -10,7 +10,7 @@ class test_messages_aggregator(unittest.TestCase):
     def test_no_aggregate(self):
         output = mkstemp()[1]
         agg = Aggregate(output, ["test/data/messages_en_US.properties", "test/data/messages_en_US_from_addon.properties"])
-        MessagesManager([agg]).aggregate()
+        MessagesManager([agg]).aggregate(None)
         assert_equal("""## DO NOT EDIT FOLLOWING LINE
 # test/data/messages_en_US.properties
 label.foo=Bar
@@ -25,7 +25,7 @@ label.fii=bur""", self.getResult(output));
     def test_aggregate(self):
         output = mkstemp()[1]
         agg = Aggregate(output, ["test/data/messages_en_US.properties"])
-        MessagesManager([agg]).aggregate()
+        MessagesManager([agg]).aggregate(None)
         assert_equal("""## DO NOT EDIT FOLLOWING LINE
 # test/data/messages_en_US.properties
 label.foo=Bar
@@ -36,7 +36,7 @@ label.bidule=yo""", self.getResult(output));
     def test_no_split(self):
         output = mkstemp()[1]
         agg = Aggregate("test/data/messages_en_US_not_aggregated.properties", [output])
-        MessagesManager([agg]).split()
+        MessagesManager([agg]).split(None)
         # first filepath is kept because it uses another path than temp test file
         assert_equal("""# test/data/messages_en_US.properties
 label.foo=Bar
@@ -48,7 +48,7 @@ label.bidule=yo""", self.getResult(output));
         output1 = mkstemp()[1]
         output2 = mkstemp()[1]
         agg = Aggregate("test/data/messages_en_US_aggregated.properties", [output1, output2])
-        MessagesManager([agg]).split()
+        MessagesManager([agg]).split(None)
 
         # first filepath is kept because it uses another path than temp test file
 

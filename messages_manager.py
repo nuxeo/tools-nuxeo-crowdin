@@ -3,7 +3,7 @@
 #
 # Handles aggregation of messages* files from a given list of repositories
 
-import string, sys
+import string, sys, os
 
 class Aggregate:
     """
@@ -26,39 +26,37 @@ class MessagesManager:
     def __init__(self, aggregates):
         self.aggregates = aggregates
 
-    def aggregate(self):
+    def aggregate(self, outputdir):
         for aggregate in self.aggregates:
             if len(aggregate.origpaths) > 1:
                 # aggregate content and copy to target file
                 i = 0
                 for origpath in aggregate.origpaths:
+                    outpath = os.path.join(outputdir, aggregate.targetpath)
                     if i == 0:
-                        self.writeAggregated(origpath, aggregate.targetpath, 'w')
+                        self.writeAggregated(origpath, outpath, 'w')
                     else:
-                        self.writeAggregated(origpath, aggregate.targetpath, 'a', start=False)
+                        self.writeAggregated(origpath, outpath, 'a', start=False)
                     i += 1
             else:
                 # just copy the content to target file
-                self.writeAggregated(aggregate.origpaths[0], aggregate.targetpath, 'w')
+                outpath = os.path.join(outputdir, aggregate.targetpath)
+                self.writeAggregated(aggregate.origpaths[0], outpath, 'w')
 
     def writeAggregated(self, filepath, targetpath, mode, start=True):
-        fi = open(filepath, 'r')
-        fo = open(targetpath, mode)
+        fi = self.open(filepath, 'r')
+        fo = self.open(targetpath, mode, mkdir=True)
         if not start:
             fo.write("\n\n")
         fo.write("## DO NOT EDIT FOLLOWING LINE\n")
         fo.write("# " + filepath + "\n")
         try:
-            emptyLines = 0
+            nbEmpty = 0
             for line in fi:
 
-                if not line.rstrip():
-                    emptyLines += 1
+                (stillEmpty, nbEmpty) = self.handle_empty(line, nbEmpty, fo)
+                if stillEmpty is True:
                     continue
-                else:
-                    if emptyLines >= 1:
-                        fo.write("\n")
-                    emptyLines = 0
 
                 fo.write(line)
 
@@ -66,42 +64,38 @@ class MessagesManager:
             fi.close()
             fo.close()
 
-    def split(self):
+    def split(self, outputdir):
         for aggregate in self.aggregates:
-            self.writeSplit(aggregate.targetpath, aggregate.origpaths)
+            self.writeSplit(aggregate.targetpath, outputdir, aggregate.origpaths)
 
-    def writeSplit(self, filepath, targetpaths):
+    def writeSplit(self, filepath, outputdir, targetpaths):
         if len(targetpaths) > 1:
             # just copy back content to target file, removing header
-            fi = open(filepath, 'r')
-            i = 0
-            current = targetpaths[i]
+            fi = self.open(filepath, 'r')
             fo = None
+            i = 0
+            current = os.path.join(outputdir, targetpaths[i])
             try:
                 j = 0
-                emptyLines = 0
+                nbEmpty = 0
                 for line in fi:
 
-                    if not line.rstrip():
-                        emptyLines += 1
+                    (stillEmpty, nbEmpty) = self.handle_empty(line, nbEmpty, fo)
+                    if stillEmpty is True:
                         continue
-                    else:
-                        if emptyLines >= 1:
-                            fo.write("\n")
-                        emptyLines = 0
 
                     if "## DO NOT EDIT FOLLOWING LINE\n" == line:
                         # open next targetpath
                         if fo is not None:
                             fo.close()
-                        current = targetpaths[i]
+                        current = os.path.join(outputdir, targetpaths[i])
                         i += 1
-                        fo = open(current, 'w')
+                        fo = self.open(current, 'w', mkdir=True)
                         j = 0
                         continue
                     elif (j == 0 or j == 1) and (line.startswith("# " + current)):
                         continue
-                    elif emptyLines < 1:
+                    elif nbEmpty < 1:
                         fo.write(line)
                     j += 1
             finally:
@@ -110,28 +104,43 @@ class MessagesManager:
                     fo.close()
         else:
             # just copy back content to target file, removing header
-            fi = open(filepath, 'r')
-            fo = open(targetpaths[0], 'w')
+            fi = self.open(filepath, 'r')
+            fo = self.open(targetpaths[0], 'w', mkdir=True)
             try:
                 i = 0
-                emptyLines = 0
+                nbEmpty = 0
                 for line in fi:
-
-                    if not line.rstrip():
-                        emptyLines += 1
-                        continue
-                    else:
-                        if emptyLines >= 1:
-                            fo.write("\n")
-                        emptyLines = 0
+                    (stillEmpty, nbEmpty) = self.handle_empty(line, nbEmpty, fo)
 
                     if i == 0 and "## DO NOT EDIT FOLLOWING LINE\n" == line:
                         continue
                     elif (i == 0 or i == 1) and (line.startswith("# " + filepath)):
                         continue
-                    elif emptyLines < 1:
+                    elif nbEmpty < 1:
                         fo.write(line)
                     i += 1
             finally:
                 fi.close()
                 fo.close()
+
+    def handle_empty(self, line, nbEmpty, out):
+        if not line.rstrip():
+            return (True, nbEmpty + 1)
+        else:
+            if nbEmpty >= 1:
+                out.write("\n")
+            return (False, 0)
+
+    def open(self, path, mode, mkdir=False):
+        if mkdir:
+            self.mkdir_if_needed(path)
+        return open(path, mode)
+
+    def mkdir_if_needed(self, filename):
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                    pass
+                else: raise
