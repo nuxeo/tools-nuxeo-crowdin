@@ -65,6 +65,8 @@ class AggregatesParser:
                         res[lang].extend(mpaths)
                     else:
                         res[lang] = mpaths
+                    # sort for deterministic behaviour
+                    res[lang].sort()
         return res
 
 class MessagesManager:

@@ -90,8 +90,8 @@ class test_parser(unittest.TestCase):
         assert_true('en_US' in res)
         assert_equal(3, len(res['en_US']))
         assert_equal('test/data/addon/messages_en_US.properties', res['en_US'][0])
-        assert_equal('test/data/nuxeo/nuxeo-other/messages_en_US.properties', res['en_US'][1])
-        assert_equal('test/data/nuxeo/nuxeo-features/nuxeo-platform-lang/messages_en_US.properties', res['en_US'][2])
+        assert_equal('test/data/nuxeo/nuxeo-features/nuxeo-platform-lang/messages_en_US.properties', res['en_US'][1])
+        assert_equal('test/data/nuxeo/nuxeo-other/messages_en_US.properties', res['en_US'][2])
         assert_true('fr_FR' in res)
         assert_equal(1, len(res['fr_FR']))
         assert_equal('test/data/nuxeo/nuxeo-features/nuxeo-platform-lang/messages_fr_FR.properties', res['fr_FR'][0])
@@ -105,8 +105,8 @@ class test_parser(unittest.TestCase):
         assert_equal(3, len(res))
         assert_true('en_US' in res)
         assert_equal(2, len(res['en_US']))
-        assert_equal('test/data/nuxeo/nuxeo-other/messages_en_US.properties', res['en_US'][0])
-        assert_equal('test/data/nuxeo/nuxeo-features/nuxeo-platform-lang/messages_en_US.properties', res['en_US'][1])
+        assert_equal('test/data/nuxeo/nuxeo-features/nuxeo-platform-lang/messages_en_US.properties', res['en_US'][0])
+        assert_equal('test/data/nuxeo/nuxeo-other/messages_en_US.properties', res['en_US'][1])
 
     def test_parser_multiple(self):
         ap = AggregatesParser(crowdin='crowdin_multiple.ini')
