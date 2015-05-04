@@ -70,4 +70,6 @@ label.lang=Foo Br""", res[2][1])
                 finally:
                     if f is not None:
                         f.close()
+        # sort for deterministic result
+        res.sort()
         return res
