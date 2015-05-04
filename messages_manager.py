@@ -5,6 +5,7 @@ Handles aggregation of messages* files from a given list of repositories
 """
 
 import string, sys, os
+import ConfigParser
 
 class Aggregate:
     """
@@ -18,7 +19,53 @@ class Aggregate:
         return "Aggregate target='%s', paths='%s'" %(self.targetpath, self.origpaths,)
 
     def __repr__(self):
-        return "Aggregate target='%s', paths='%s'" %(self.targetpath, self.origpaths,)
+        return self.__str__()
+
+class AggregatesParser:
+    """
+    Detects aggregates to takes into account given a base directory,
+    looking fro crowding.ini files in the tree.
+
+    The additional project argument can be used to filter confiuration
+    from crowdin.ini files and gather files for different use cases.
+    """
+    def __init__(self, crowdin="crowdin.ini"):
+        self.crowdin = crowdin
+
+    """
+    Returns a map with language as key, and lists of paths to messages as value.
+    """
+    def load(self, dir, project, excluded_dirs=[]):
+        res = {}
+        # TODO: optimize lookup of files (use glob?)
+        for path, subdirs, files in os.walk(dir):
+            if os.path.relpath(path, dir) in excluded_dirs:
+                continue
+            for filename in files:
+                if filename != self.crowdin:
+                    continue
+                f = os.path.join(path, filename)
+                if f in excluded_dirs:
+                    continue
+                c = ConfigParser.ConfigParser()
+                c.optionxform = str
+                c.read(f)
+                if not c.has_section(project):
+                    continue
+                for lang in c.options(project):
+                    val = c.get(project, lang)
+                    mpaths = []
+                    if "," in val:
+                        # handle multiple use case
+                        for p in val.split(','):
+                            mpaths.append(os.path.join(path, p.strip()))
+                    else:
+                        mpaths.append(os.path.join(path, val.strip()))
+                    if lang in res:
+                        res[lang].extend(mpaths)
+                    else:
+                        res[lang] = mpaths
+        return res
 
 class MessagesManager:
     """
