@@ -12,14 +12,14 @@ class test_aggregation(unittest.TestCase):
         agg = Aggregate(output, ['test/data/messages_en_US.properties', 'test/data/messages_en_US_from_addon.properties'])
         MessagesManager([agg]).aggregate(None)
         assert_equal("""## DO NOT EDIT FOLLOWING LINE
-# test/data/messages_en_US.properties
+# Translations from test/data/messages_en_US.properties
 label.foo=Bar
 label.truc=Chouette
 
 label.bidule=yo
 
 ## DO NOT EDIT FOLLOWING LINE
-# test/data/messages_en_US_from_addon.properties
+# Translations from test/data/messages_en_US_from_addon.properties
 label.fii=bur""", self.getResult(output));
 
     def test_aggregate(self):
@@ -27,7 +27,7 @@ label.fii=bur""", self.getResult(output));
         agg = Aggregate(output, ['test/data/messages_en_US.properties'])
         MessagesManager([agg]).aggregate(None)
         assert_equal("""## DO NOT EDIT FOLLOWING LINE
-# test/data/messages_en_US.properties
+# Translations from test/data/messages_en_US.properties
 label.foo=Bar
 label.truc=Chouette
 

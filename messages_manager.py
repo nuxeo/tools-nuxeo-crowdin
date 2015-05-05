@@ -99,7 +99,7 @@ class MessagesManager:
         if not start:
             fo.write("\n\n")
         fo.write("## DO NOT EDIT FOLLOWING LINE\n")
-        fo.write("# " + filepath + "\n")
+        fo.write("# Translations from " + filepath + "\n")
         try:
             nbEmpty = 0
             for line in fi:
@@ -143,7 +143,7 @@ class MessagesManager:
                         fo = self.open(current, 'w', mkdir=True)
                         j = 0
                         continue
-                    elif (j == 0 or j == 1) and (line.startswith("# " + current)):
+                    elif (j == 0 or j == 1) and (line.startswith("# Translations from " + current)):
                         continue
                     elif nbEmpty < 1:
                         fo.write(line)
