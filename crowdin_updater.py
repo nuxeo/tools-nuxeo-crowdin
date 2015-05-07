@@ -107,14 +107,13 @@ def main():
     parser.add_argument('-f', dest='inputfile', help='Update file path')
     parser.add_argument('--un', dest='update_nuxeo', action='store_true', help='Update Nuxeo from Crowdin')
     parser.add_argument('-o', dest='outputdir', help='Output directory')
-    parser.add_argument('-b', dest='build', action='store_true', help='Do build')
     args = parser.parse_args()
 
     cu = CrowdinUpdater(args.project, args.key)
     if args.update_crowdin:
         cu.upload(args.inputfile)
     if args.update_nuxeo:
-        cu.download(args.outputdir, args.build)
+        cu.download(args.outputdir)
 
 if __name__ == '__main__':
     main()
