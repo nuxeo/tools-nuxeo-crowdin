@@ -130,7 +130,7 @@ if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
 	    fi
 	fi
 	mvn clean verify
-	MSG_COMMIT="Automatic udpate of messages from Crowdin"
+	MSG_COMMIT="Automatic update of messages from Crowdin"
 	if [ ! -z $JIRA ]; then
 	    MSG_COMMIT="$JIRA: $MSG_COMMIT"
 	fi
@@ -139,7 +139,7 @@ if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
     }
 
     if git status --porcelain | grep "^??"; then
-	echo "Spotted new messages"
+	echo "Spotted new languages"
 	git status
     fi
 
