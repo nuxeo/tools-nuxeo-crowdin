@@ -63,7 +63,7 @@ class CrowdinUpdater:
             'update_options': 'update_as_unapproved',
             }
         files = {
-            'messages.properties': open(inputfile, 'rb')
+            'files[messages.properties]': open(inputfile, 'rb')
             }
         r = requests.post('https://api.crowdin.com/api/project/%s/update-file?key=%s' %(self.project, self.key), data=data, files=files)
         res = self.parseXMLResponse(r)
