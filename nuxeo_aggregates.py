@@ -10,17 +10,19 @@ Options:
         Print this message and exit.
 
     --a
-        Handle all languages (fr, en + ext)
+        Handle all languages (en + ext)
     --e
-        Only handle ext languages (default: handle only fr and en messages)
+        Only handle ext languages (default: handle only en messages)
 """
 
 import sys, os, argparse
 from messages_manager import Aggregate, AggregatesParser, MessagesManager
 
+MAIN_LANG_MODULE_PATH = 'nuxeo-features/nuxeo-platform-lang'
+EXT_LANG_MODULE_PATH = 'addons/nuxeo-platform-lang-ext'
+
 DEFAULT_LANGS = {
     "en_US": ("messages.properties", ""),
-    "fr_FR": ("messages_fr_FR.properties", "fr")
 }
 
 EXT_LANGS = {}
@@ -32,6 +34,7 @@ EXT_LANGUAGES = [
     ("el", "el_GR"),
     ("es_ES", "es_ES"),
     ("eu", "eu_ES"),
+    ("fr", "fr_FR"),
     ("fr_CA", "fr_CA"),
     ("gl", "gl_ES"),
     ("it", "it_IT"),
@@ -57,12 +60,9 @@ ALL_LANGS.update(EXT_LANGS)
 def aggregate(inputdir, outputdir, ext=False, all=False):
     ap = AggregatesParser()
 
-    main_res = {}
-    if ext is False or all is True:
-        main_res = ap.load(os.path.join(inputdir, 'nuxeo-features/nuxeo-platform-lang'), 'nuxeo')
-    ext_res = {}
-    if ext is True or all is True:
-        ext_res = ap.load(inputdir, 'nuxeo', excluded_dirs=['nuxeo-features/nuxeo-platform-lang'])
+    # make sure platform-lang is the first one on the sorted list of results
+    main_res = ap.load(os.path.join(inputdir, MAIN_LANG_MODULE_PATH), 'nuxeo')
+    ext_res = ap.load(inputdir, 'nuxeo', excluded_dirs=[MAIN_LANG_MODULE_PATH])
 
     langs = DEFAULT_LANGS
     if all is True:
