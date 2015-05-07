@@ -46,10 +46,7 @@ LANG_EXT_ROOT=$NUXEO_PATH/addons/nuxeo-platform-lang-ext
 
 # clone all addons
 cd $NUXEO_PATH
-./clone.py
-# make sure everything is up to date
-. scripts/gitfunctions.sh
-gitfa pull --rebase
+./clone.py $BRANCH
 cd $HERE
 
 #
