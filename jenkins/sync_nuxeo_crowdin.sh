@@ -44,11 +44,6 @@ SCRIPT_PATH="`dirname \"$0\"`"
 NUXEO_PATH=./nuxeo
 LANG_EXT_ROOT=$NUXEO_PATH/addons/nuxeo-platform-lang-ext
 
-# clone all addons
-cd $NUXEO_PATH
-./clone.py $BRANCH
-cd $HERE
-
 #
 # Init parameters
 #
@@ -76,6 +71,11 @@ if [ $DRYRUN = true ]; then
 fi
 
 COMMIT_BRANCH_CREATED=false
+
+# clone all addons
+cd $NUXEO_PATH
+./clone.py $BRANCH
+cd $HERE
 
 #
 # Nuxeo -> Crowdin update
