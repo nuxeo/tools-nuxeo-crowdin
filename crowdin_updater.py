@@ -60,7 +60,7 @@ class CrowdinUpdater:
 
     def upload(self, inputfile, package=None):
         data = {
-            'update_options': 'update_as_unapproved',
+            'update_option': 'update_as_unapproved',
             }
         files = {
             'files[messages.properties]': open(inputfile, 'rb')
