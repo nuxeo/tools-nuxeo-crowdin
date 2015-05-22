@@ -25,11 +25,12 @@ A Jenkins job can be setup to call script at
 jenkins/sync_nuxeo_crowdin.sh to handle changes to this file. It
 accepts options to push only the English reference translation file,
 managed as one big file in the nuxeo-platform-lang-ext module. Only
-the master branch is handled via Crowdin.
+the master branch is handled via Crowdin. This change is supposed to
+be triggered by a timer, or manually, after an update on Nuxeo side.
 
 The same Jenkins job can be configured to trigger update of ext
 languages files from Crowdin, to handle changes the other way
-around. This change is supposed to be triggered by a timer, or
+around. This change is supposed to be also triggered by a timer, or
 manually, after an update on Crowdin side.
 
 As a general rule: github is the master reference version, and changes
