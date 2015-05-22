@@ -14,8 +14,6 @@ that will:
 
 # Nuxeo default modules and main addons management
 
-### Adding/Removing an addon translation files from the Crowdin main file
-
 Only one file is maintained on Crowdin side for translation management.
 
 Nuxeo modules that should contribute to the Crowdin files should hold
