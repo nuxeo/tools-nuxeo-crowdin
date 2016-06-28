@@ -16,6 +16,7 @@ import string, sys, os, shutil, zipfile, gzip, requests, argparse
 from StringIO import StringIO
 from xml.dom import minidom
 
+
 class CrowdinUpdater:
 
     """
@@ -55,20 +56,20 @@ class CrowdinUpdater:
                         with source, target:
                             shutil.copyfileobj(source, target)
         else:
-            raise ValueError('Download failed: %s' %(res[1],))
+            raise ValueError('Download failed: %s' % res[1])
         return res
 
-    def upload(self, inputfile, package=None):
+    def upload(self, inputfile):
         data = {
             'update_option': 'update_as_unapproved',
-            }
+        }
         files = {
             'files[messages.properties]': open(inputfile, 'rb')
-            }
+        }
         r = requests.post('https://api.crowdin.com/api/project/%s/update-file?key=%s' %(self.project, self.key), data=data, files=files)
         res = self.parseXMLResponse(r)
         if res[0] <= 0:
-            raise ValueError('Upload failed: %s' %(res[1],))
+            raise ValueError('Upload failed: %s' % res[1])
         return res
 
     # Returns a tuple (error code, message)
