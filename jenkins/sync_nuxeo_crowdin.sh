@@ -11,16 +11,17 @@
 #
 # Parameters:
 # - PROJECT: Crowdin project name (nuxeo by default)
+# - FORMAT: Crowdin project format (java by default)
 # - KEY: Crowdin project API key
-# - BRANCH: Nuxeo branch to work (master by default)
+# - BRANCH: Nuxeo branch to work (master by default, see commons.sh)
 # - COMMIT_BRANCH: if not blank, branch to work on, created from $BRANCH
 # - JIRA: if not blank, jira issue to reference on commit message
 #
 # Boolean params for corresponding actions:
 # - UPDATE_CROWDIN_FROM_NUXEO (default to false if var unset)
 # - UPDATE_NUXEO_FROM_CROWDIN (default to false if var unset)
-# - DRYRUN: if set to true, changes will not be pushed to Github and
-#   Crowdin (default to true if var unset)
+# - DRYRUN: if set to true, changes will not be pushed to GitHub and
+#   Crowdin (default to true if var unset, see commons.sh)
 
 set -e
 
@@ -44,33 +45,24 @@ SCRIPT_PATH="`dirname \"$0\"`"
 NUXEO_PATH=./nuxeo
 LANG_EXT_ROOT=$NUXEO_PATH/addons/nuxeo-platform-lang-ext
 
+# Include common variables and functions
+source $SCRIPT_PATH/common.sh
+
 #
 # Init parameters
 #
 if [ -z ${PROJECT+x} ]; then
     PROJECT="nuxeo"
 fi
-if [ -z ${BRANCH+x} ]; then
-    BRANCH="master"
+if [ -z ${FORMAT+x} ]; then
+    FORMAT="java"
 fi
-
-DO_PUSH=false
 if [ -z ${UPDATE_CROWDIN_FROM_NUXEO+x} ]; then
     UPDATE_CROWDIN_FROM_NUXEO=false
 fi
 if [ -z ${UPDATE_NUXEO_FROM_CROWDIN+x} ]; then
     UPDATE_NUXEO_FROM_CROWDIN=false
 fi
-
-if [ -z ${DRYRUN+x} ]; then
-    DRYRUN=true
-fi
-DRYRUN_CMD=""
-if [ $DRYRUN = true ]; then
-    DRYRUN_CMD="--dry-run"
-fi
-
-COMMIT_BRANCH_CREATED=false
 
 # clone all addons
 cd $NUXEO_PATH
@@ -81,32 +73,18 @@ cd $HERE
 # Nuxeo -> Crowdin update
 #
 if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
-    echo Updating Crowdin from Nuxeo
     $SCRIPT_PATH/../nuxeo_aggregates.py $NUXEO_PATH $LANG_EXT_ROOT/src/main/resources/crowdin
     echo Aggregate done
 
     cd $LANG_EXT_ROOT
     git diff --quiet || {
-	echo "Spotted changes on reference messages file"
-	if [ ! -z $COMMIT_BRANCH ]; then
-            # maybe checkout a branch
-	    echo "Creating branch $BRANCH"
-	    git checkout -b $COMMIT_BRANCH
-	    COMMIT_BRANCH_CREATED=true
-	fi
-	mvn clean verify
-	MSG_COMMIT="Automatic merge of reference messages for Crowdin"
-	if [ ! -z $JIRA ]; then
-	    MSG_COMMIT="$JIRA: $MSG_COMMIT"
-	fi
-	git commit -m "$MSG_COMMIT" .
-	DO_PUSH=true
-
+        echo "Spotted changes on reference messages file"
+        git_create_branch
+        mvn clean verify
+        git_commit "Automatic merge of reference messages for Crowdin"
         # send to Crowdin
-	if [ $DRYRUN = false ]; then
-	    cd $HERE
-	    $SCRIPT_PATH/../crowdin_updater.py $PROJECT $KEY --uc -f $LANG_EXT_ROOT/src/main/resources/crowdin/messages.properties
-	fi
+        cd $HERE
+        update_crowdin $PROJECT $KEY $LANG_EXT_ROOT/src/main/resources/crowdin/messages.properties
     }
     cd $HERE
 fi
@@ -115,44 +93,20 @@ fi
 # Crowdin -> Nuxeo update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    echo Updating Nuxeo from Crowdin
-    $SCRIPT_PATH/../crowdin_updater.py $PROJECT $KEY --un -o $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
+    update_nuxeo $PROJECT $KEY $FORMAT $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
 
     cd $LANG_EXT_ROOT
     git diff --quiet || {
-	echo "Spotted changes on ext messages files"
-	if [ ! -z $COMMIT_BRANCH ]; then
-            # maybe checkout a branch
-	    if [ $COMMIT_BRANCH_CREATED = false ]; then
-		echo "Creating branch $BRANCH"
-		git checkout -b $COMMIT_BRANCH
-		COMMIT_BRANCH_CREATED=true
-	    fi
-	fi
-	mvn clean verify
-	MSG_COMMIT="Automatic update of messages from Crowdin"
-	if [ ! -z $JIRA ]; then
-	    MSG_COMMIT="$JIRA: $MSG_COMMIT"
-	fi
-	git commit -m "$MSG_COMMIT" .
-	DO_PUSH=true
+        echo "Spotted changes on ext messages files"
+        git_create_branch
+        mvn clean verify
+        git_commit "Automatic update of messages from Crowdin"
     }
-
-    if git status --porcelain | grep "^??"; then
-	echo "Spotted new languages"
-	git status
-    fi
-
+    git_status
     cd $HERE
 fi
 
 # actual push of changes
-if [ $DO_PUSH = true ]; then
-    cd $LANG_EXT_ROOT
-    if [ ! -z $COMMIT_BRANCH ]; then
-	git push origin $COMMIT_BRANCH $DRYRUN_CMD
-    else
-	git push origin $BRANCH $DRYRUN_CMD
-    fi
-    cd $HERE
-fi
+cd $LANG_EXT_ROOT
+git_push
+cd $HERE
