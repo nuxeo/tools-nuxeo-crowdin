@@ -22,8 +22,9 @@ class CrowdinUpdater:
     """
     Handles download/push from/to Crowdin.
     """
-    def __init__(self, project, key):
+    def __init__(self, project, key, format=None):
         self.project = project
+        self.format = format
         self.key = key
 
     def build(self):
@@ -49,10 +50,16 @@ class CrowdinUpdater:
             zipdata = StringIO(r.content)
             with zipfile.ZipFile(zipdata) as zf:
                 for filepath in zf.namelist():
-                    if filepath.endswith('.properties'):
-                        filename = os.path.basename(filepath)
+                    language = os.path.dirname(filepath)
+                    filename = os.path.basename(filepath)
+                    if filename:
+                        if self.format == 'json':
+                            root, ext = os.path.splitext(filename)
+                            target_filename = '%s-%s%s' % (root, language, ext)
+                        else:
+                            target_filename = filename
+                        target = file(os.path.join(outputdir, target_filename), "wb")
                         source = zf.open(filepath)
-                        target = file(os.path.join(outputdir, filename), "wb")
                         with source, target:
                             shutil.copyfileobj(source, target)
         else:
@@ -64,7 +71,7 @@ class CrowdinUpdater:
             'update_option': 'update_as_unapproved',
         }
         files = {
-            'files[messages.properties]': open(inputfile, 'rb')
+            'files[%s]' % os.path.basename(inputfile): open(inputfile, 'rb')
         }
         r = requests.post('https://api.crowdin.com/api/project/%s/update-file?key=%s' %(self.project, self.key), data=data, files=files)
         res = self.parseXMLResponse(r)
@@ -104,13 +111,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('project', help='the Crowdin project name (mandatory)')
     parser.add_argument('key', help='the Crowdin API key (mandatory)')
+    parser.add_argument('-F', dest='format', help='Crowdin project format, possible values: "json" only for now')
     parser.add_argument('--uc', dest='update_crowdin', action='store_true', help='Update Crowdin from Nuxeo')
     parser.add_argument('-f', dest='inputfile', help='Update file path')
     parser.add_argument('--un', dest='update_nuxeo', action='store_true', help='Update Nuxeo from Crowdin')
     parser.add_argument('-o', dest='outputdir', help='Output directory')
     args = parser.parse_args()
 
-    cu = CrowdinUpdater(args.project, args.key)
+    cu = CrowdinUpdater(args.project, args.key, format=args.format)
     if args.update_crowdin:
         cu.upload(args.inputfile)
     if args.update_nuxeo:
