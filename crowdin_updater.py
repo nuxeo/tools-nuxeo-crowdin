@@ -3,7 +3,7 @@
 """
 Handles download/push from/to Crowdin.
 
-Usage: ./crowdin_updater.py [options] project key
+Usage: ./crowdin_updater.py [options] project
 
 Options:
     -h / --help
@@ -16,16 +16,23 @@ import string, sys, os, shutil, zipfile, gzip, requests, argparse
 from StringIO import StringIO
 from xml.dom import minidom
 
+ENV_CROWDIN_API_KEY = 'CROWDIN_API_KEY'
+
 
 class CrowdinUpdater:
 
     """
     Handles download/push from/to Crowdin.
+
+    The Crowdin API key must be set in the "CROWDIN_API_KEY" environment variable.
     """
-    def __init__(self, project, key, format=None):
+    def __init__(self, project, format=None):
         self.project = project
         self.format = format
-        self.key = key
+        if ENV_CROWDIN_API_KEY not in os.environ:
+            raise ValueError('Missing Crowdin API key in environment, please set %s environment variable.'
+                % ENV_CROWDIN_API_KEY)
+        self.key = os.environ[ENV_CROWDIN_API_KEY].strip()
 
     def build(self):
         params = {'key': self.key}
@@ -110,7 +117,6 @@ class CrowdinUpdater:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('project', help='the Crowdin project name (mandatory)')
-    parser.add_argument('key', help='the Crowdin API key (mandatory)')
     parser.add_argument('-F', dest='format', help='Crowdin project format, possible values: "json" only for now')
     parser.add_argument('--uc', dest='update_crowdin', action='store_true', help='Update Crowdin from Nuxeo')
     parser.add_argument('-f', dest='inputfile', help='Update file path')
@@ -118,7 +124,7 @@ def main():
     parser.add_argument('-o', dest='outputdir', help='Output directory')
     args = parser.parse_args()
 
-    cu = CrowdinUpdater(args.project, args.key, format=args.format)
+    cu = CrowdinUpdater(args.project, format=args.format)
     if args.update_crowdin:
         cu.upload(args.inputfile)
     if args.update_nuxeo:

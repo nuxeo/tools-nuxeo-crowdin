@@ -84,7 +84,7 @@ if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
         git_commit "Automatic merge of reference messages for Crowdin"
         # send to Crowdin
         cd $HERE
-        update_crowdin $PROJECT $KEY $LANG_EXT_ROOT/src/main/resources/crowdin/messages.properties
+        update_crowdin $PROJECT $LANG_EXT_ROOT/src/main/resources/crowdin/messages.properties
     }
     cd $HERE
 fi
@@ -93,7 +93,7 @@ fi
 # Crowdin -> Nuxeo update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $KEY $FORMAT $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
+    update_nuxeo $PROJECT $FORMAT $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
 
     cd $LANG_EXT_ROOT
     git diff --quiet || {

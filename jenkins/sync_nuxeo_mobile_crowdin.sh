@@ -51,14 +51,14 @@ fi
 # Nuxeo Mobile -> Crowdin update
 #
 if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
-    update_crowdin $PROJECT $KEY $NUXEO_MOBILE_PATH/src/i18n/i18n.json
+    update_crowdin $PROJECT $NUXEO_MOBILE_PATH/src/i18n/i18n.json
 fi
 
 #
 # Crowdin -> Nuxeo Mobile update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $KEY $FORMAT $NUXEO_MOBILE_PATH/src/i18n
+    update_nuxeo $PROJECT $FORMAT $NUXEO_MOBILE_PATH/src/i18n
 
     cd $NUXEO_MOBILE_PATH
     git diff --quiet || {
