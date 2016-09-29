@@ -67,6 +67,9 @@ fi
 # clone all addons
 cd $NUXEO_PATH
 ./clone.py $BRANCH
+# NXBT-1293: extra clone of the 3d module
+cd addons
+git clone git@github.com:nuxeo/nuxeo-platform-3d.git
 cd $HERE
 
 #
