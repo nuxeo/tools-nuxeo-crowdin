@@ -65,7 +65,7 @@ fi
 # Nuxeo Web UI -> Crowdin update
 #
 if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
-    update_crowdin $PROJECT $INPUT_FILE
+    update_crowdin $PROJECT $INPUT_FILE $CROWDIN_PARENT_FOLDER
 fi
 
 #

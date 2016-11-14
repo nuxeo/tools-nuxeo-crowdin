@@ -42,7 +42,7 @@ class CrowdinUpdater:
             raise ValueError("Build failed: %s" %(res[1],))
         return res
 
-    def download(self, outputdir, build=True, package=None, parentdir=''):
+    def download(self, outputdir, build=True, package=None, parentdir=None):
         if package is None:
             package = "all"
         if build is True:
@@ -61,8 +61,9 @@ class CrowdinUpdater:
                     if not filepath.endswith('/'):
                         filename = os.path.basename(filepath)
                         if filename:
+                            # making sure that filepath matches pattern <lang>/<parent>/<filename>
                             language = filepath.split('/')[0]
-                            if os.path.dirname(filepath).replace(language, '').strip('/') == parentdir.strip('/'):
+                            if os.path.dirname(filepath).replace(language, '').strip('/') == (parentdir.strip('/') if parentdir else ''):
                                 if self.format == 'json':
                                     root, ext = os.path.splitext(filename)
                                     target_filename = '%s-%s%s' % (root, language, ext)
@@ -76,12 +77,12 @@ class CrowdinUpdater:
             raise ValueError('Download failed: %s' % res[1])
         return res
 
-    def upload(self, inputfile):
+    def upload(self, inputfile, parentdir=None):
         data = {
             'update_option': 'update_as_unapproved',
         }
         files = {
-            'files[%s]' % os.path.basename(inputfile): open(inputfile, 'rb')
+            'files[%s]' % os.path.join(parentdir or '', os.path.basename(inputfile)): open(inputfile, 'rb')
         }
         r = requests.post('https://api.crowdin.com/api/project/%s/update-file?key=%s' %(self.project, self.key), data=data, files=files)
         res = self.parseXMLResponse(r)
@@ -125,17 +126,14 @@ def main():
     parser.add_argument('-f', dest='inputfile', help='Update file path')
     parser.add_argument('--un', dest='update_nuxeo', action='store_true', help='Update Nuxeo from Crowdin')
     parser.add_argument('-o', dest='outputdir', help='Output directory')
-    parser.add_argument('-p', dest='parentdir', help='Crowding parent folder')
+    parser.add_argument('-p', dest='parentdir', help='Crowdin parent folder')
     args = parser.parse_args()
 
     cu = CrowdinUpdater(args.project, format=args.format)
     if args.update_crowdin:
-        cu.upload(args.inputfile)
+        cu.upload(args.inputfile, parentdir=args.parentdir)
     if args.update_nuxeo:
-        if args.parentdir:
-            cu.download(args.outputdir, parentdir=args.parentdir)
-        else:
-            cu.download(args.outputdir)
+        cu.download(args.outputdir, parentdir=args.parentdir)
 
 if __name__ == '__main__':
     main()
