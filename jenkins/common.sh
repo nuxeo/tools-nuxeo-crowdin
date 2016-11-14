@@ -26,11 +26,16 @@ fi
 # Parameters:
 # - $1: Crowdin project name
 # - $2: Reference file to upload
+# - $3: Parent folder inside Crowdin project (optional)
 function update_crowdin() {
     echo Updating Crowdin from Nuxeo
     if [ $DRYRUN = false ]; then
         # upload to Crowdin
-        $SCRIPT_PATH/../crowdin_updater.py $1 --uc -f $2
+        if [ ! -z $3 ]; then
+          $SCRIPT_PATH/../crowdin_updater.py $1 --uc -f $2 -p $3
+        else
+          $SCRIPT_PATH/../crowdin_updater.py $1 --uc -f $2
+        fi
     fi
 }
 
@@ -38,10 +43,15 @@ function update_crowdin() {
 # - $1: Crowdin project name
 # - $2: Crowdin project format
 # - $3: Output directory for translation files
+# - $4: Parent folder inside Crowdin project (optional)
 function update_nuxeo() {
     echo Updating Nuxeo from Crowdin
     # download from Crowdin
-    $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3
+    if [ ! -z $4 ]; then
+      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3 -p $4
+    else
+      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3
+    fi
 }
 
 function git_create_branch() {
