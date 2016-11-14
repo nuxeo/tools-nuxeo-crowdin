@@ -41,7 +41,11 @@ function update_crowdin() {
 function update_nuxeo() {
     echo Updating Nuxeo from Crowdin
     # download from Crowdin
-    $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3
+    if [ ! -z $4 ]; then
+      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3 -p $4
+    else
+      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3
+    fi
 }
 
 function git_create_branch() {

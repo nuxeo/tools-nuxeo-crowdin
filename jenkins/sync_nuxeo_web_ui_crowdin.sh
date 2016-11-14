@@ -51,6 +51,9 @@ fi
 if [ -z ${FORMAT+x} ]; then
     FORMAT="json"
 fi
+if [ -z ${CROWDIN_PARENT_FOLDER+x} ]; then
+    CROWDIN_PARENT_FOLDER=""
+fi
 if [ -z ${UPDATE_CROWDIN_FROM_NUXEO+x} ]; then
     UPDATE_CROWDIN_FROM_NUXEO=false
 fi
@@ -69,7 +72,7 @@ fi
 # Crowdin -> Nuxeo Web UI
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $FORMAT $OUTPUT_FOLDER
+    update_nuxeo $PROJECT $FORMAT $OUTPUT_FOLDER $CROWDIN_PARENT_FOLDER
 
     cd $PROJECT_PATH
     git diff --quiet || {

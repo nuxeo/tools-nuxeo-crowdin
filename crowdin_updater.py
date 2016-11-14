@@ -42,7 +42,7 @@ class CrowdinUpdater:
             raise ValueError("Build failed: %s" %(res[1],))
         return res
 
-    def download(self, outputdir, build=True, package=None):
+    def download(self, outputdir, build=True, package=None, parentdir=''):
         if package is None:
             package = "all"
         if build is True:
@@ -57,18 +57,21 @@ class CrowdinUpdater:
             zipdata = StringIO(r.content)
             with zipfile.ZipFile(zipdata) as zf:
                 for filepath in zf.namelist():
-                    language = os.path.dirname(filepath)
-                    filename = os.path.basename(filepath)
-                    if filename:
-                        if self.format == 'json':
-                            root, ext = os.path.splitext(filename)
-                            target_filename = '%s-%s%s' % (root, language, ext)
-                        else:
-                            target_filename = filename
-                        target = file(os.path.join(outputdir, target_filename), "wb")
-                        source = zf.open(filepath)
-                        with source, target:
-                            shutil.copyfileobj(source, target)
+                    # let's skip folder entries
+                    if not filepath.endswith('/'):
+                        filename = os.path.basename(filepath)
+                        if filename:
+                            language = filepath.split('/')[0]
+                            if os.path.dirname(filepath).replace(language, '').strip('/') == parentdir.strip('/'):
+                                if self.format == 'json':
+                                    root, ext = os.path.splitext(filename)
+                                    target_filename = '%s-%s%s' % (root, language, ext)
+                                else:
+                                    target_filename = filename
+                                target = file(os.path.join(outputdir, target_filename), "wb")
+                                source = zf.open(filepath)
+                                with source, target:
+                                    shutil.copyfileobj(source, target)
         else:
             raise ValueError('Download failed: %s' % res[1])
         return res
@@ -122,13 +125,17 @@ def main():
     parser.add_argument('-f', dest='inputfile', help='Update file path')
     parser.add_argument('--un', dest='update_nuxeo', action='store_true', help='Update Nuxeo from Crowdin')
     parser.add_argument('-o', dest='outputdir', help='Output directory')
+    parser.add_argument('-p', dest='parentdir', help='Crowding parent folder')
     args = parser.parse_args()
 
     cu = CrowdinUpdater(args.project, format=args.format)
     if args.update_crowdin:
         cu.upload(args.inputfile)
     if args.update_nuxeo:
-        cu.download(args.outputdir)
+        if args.parentdir:
+            cu.download(args.outputdir, parentdir=args.parentdir)
+        else:
+            cu.download(args.outputdir)
 
 if __name__ == '__main__':
     main()
