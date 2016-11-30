@@ -47,9 +47,7 @@ fi
 # clone all addons
 cd $NUXEO_PATH
 ./clone.py $BRANCH
-# NXBT-1293: extra clone of the 3d module
 cd addons
-git clone git@github.com:nuxeo/nuxeo-platform-3d.git
 # NXBT-1381: extra clone disconnected addons for 8.10
 git clone git@github.com:nuxeo/nuxeo-agenda.git
 git clone git@github.com:nuxeo/nuxeo-groups-rights-audit.git
