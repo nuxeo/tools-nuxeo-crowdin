@@ -54,7 +54,6 @@ git clone git@github.com:nuxeo/nuxeo-groups-rights-audit.git
 git clone git@github.com:nuxeo/nuxeo-multi-tenant.git
 git clone git@github.com:nuxeo/nuxeo-platform-spreadsheet.git
 git clone git@github.com:nuxeo/nuxeo-travel-expenses.git
-git clone git@github.com:nuxeo/nuxeo-tree-snapshot.git
 cd $HERE
 
 #
