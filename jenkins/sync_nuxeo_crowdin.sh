@@ -67,10 +67,6 @@ fi
 # clone all addons
 cd $NUXEO_PATH
 ./clone.py $BRANCH
-cd addons
-# NXBT-1381: extra clone disconnected addons for 8.10
-git clone git@github.com:nuxeo/nuxeo-groups-rights-audit.git
-git clone git@github.com:nuxeo/nuxeo-travel-expenses.git
 cd $HERE
 
 #
