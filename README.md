@@ -1,4 +1,6 @@
-# Nuxeo Crowdin Integration
+[![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=master/tools-nuxeo-crowdin-master)](https://qa.nuxeo.org/jenkins/job/master/job/tools-nuxeo-crowdin-master/)
+
+## Nuxeo Crowdin Integration
 
 This module holds helper bash and python scripts to handle
 synchronization of translation files from/to Crowdin.
