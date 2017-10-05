@@ -98,7 +98,7 @@ class CrowdinUpdater:
     # 1 if success
     # 0 if unknown status
     def parseXMLResponse(self, r):
-        if r.headers['content-type'].startswith('text/xml'):
+        if not r.headers['content-type'].startswith('text/xml'):
             return (-2, 'Wrong response content type: %s' % (r.headers['content-type'],))
         xmldoc = minidom.parseString(r.text)
         errors = xmldoc.getElementsByTagName('error')
