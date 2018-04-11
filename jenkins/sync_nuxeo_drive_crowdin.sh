@@ -6,7 +6,7 @@
 #
 # Directory "nuxeo-drive" is a checkout of the nuxeo-drive repository.
 #
-# The nuxeo-drive/nuxeo-drive-client/nxdrive/data/i18n directory is changed
+# The nuxeo-drive/nxdrive/data/i18n directory is changed
 # by this script.
 #
 # Parameters:
@@ -52,14 +52,14 @@ fi
 # Nuxeo Drive -> Crowdin update
 #
 if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
-    update_crowdin $PROJECT $NUXEO_DRIVE_PATH/nuxeo-drive-client/nxdrive/data/i18n/i18n.json
+    update_crowdin $PROJECT $NUXEO_DRIVE_PATH/nxdrive/data/i18n/i18n.json
 fi
 
 #
 # Crowdin -> Nuxeo Drive update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $FORMAT $NUXEO_DRIVE_PATH/nuxeo-drive-client/nxdrive/data/i18n
+    update_nuxeo $PROJECT $FORMAT $NUXEO_DRIVE_PATH/nxdrive/data/i18n
 
     cd $NUXEO_DRIVE_PATH
     git diff --quiet || {
