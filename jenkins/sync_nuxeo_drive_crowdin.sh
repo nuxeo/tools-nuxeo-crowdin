@@ -11,7 +11,6 @@
 #
 # Parameters:
 # - PROJECT: Crowdin project name (nuxeo-drive by default)
-# - FORMAT: Crowdin project format (json by default)
 # - KEY: Crowdin project API key
 # - BRANCH: Nuxeo Drive branch to work (master by default, see commons.sh)
 # - COMMIT_BRANCH: if not blank, branch to work on, created from $BRANCH
@@ -38,9 +37,6 @@ source $SCRIPT_PATH/common.sh
 if [ -z ${PROJECT+x} ]; then
     PROJECT="nuxeo-drive"
 fi
-if [ -z ${FORMAT+x} ]; then
-    FORMAT="json"
-fi
 if [ -z ${UPDATE_CROWDIN_FROM_NUXEO+x} ]; then
     UPDATE_CROWDIN_FROM_NUXEO=false
 fi
@@ -59,7 +55,7 @@ fi
 # Crowdin -> Nuxeo Drive update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $FORMAT $NUXEO_DRIVE_PATH/nxdrive/data/i18n
+    update_nuxeo $PROJECT $NUXEO_DRIVE_PATH/nxdrive/data/i18n
 
     cd $NUXEO_DRIVE_PATH
     git diff --quiet || {

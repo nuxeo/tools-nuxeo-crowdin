@@ -41,16 +41,15 @@ function update_crowdin() {
 
 # Parameters:
 # - $1: Crowdin project name
-# - $2: Crowdin project format
-# - $3: Output directory for translation files
-# - $4: Parent folder inside Crowdin project (optional)
+# - $2: Output directory for translation files
+# - $3: Parent folder inside Crowdin project (optional)
 function update_nuxeo() {
     echo Updating Nuxeo from Crowdin
     # download from Crowdin
     if [ ! -z $4 ]; then
-      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3 -p $4
+      $SCRIPT_PATH/../crowdin_updater.py $1 --un -o $2 -p $3
     else
-      $SCRIPT_PATH/../crowdin_updater.py $1 -F $2 --un -o $3
+      $SCRIPT_PATH/../crowdin_updater.py $1 --un -o $2
     fi
 }
 

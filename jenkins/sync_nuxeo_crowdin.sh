@@ -11,7 +11,6 @@
 #
 # Parameters:
 # - PROJECT: Crowdin project name (nuxeo by default)
-# - FORMAT: Crowdin project format (java by default)
 # - KEY: Crowdin project API key
 # - BRANCH: Nuxeo branch to work (master by default, see commons.sh)
 # - COMMIT_BRANCH: if not blank, branch to work on, created from $BRANCH
@@ -54,9 +53,6 @@ source $SCRIPT_PATH/common.sh
 if [ -z ${PROJECT+x} ]; then
     PROJECT="nuxeo"
 fi
-if [ -z ${FORMAT+x} ]; then
-    FORMAT="java"
-fi
 if [ -z ${UPDATE_CROWDIN_FROM_NUXEO+x} ]; then
     UPDATE_CROWDIN_FROM_NUXEO=false
 fi
@@ -93,7 +89,7 @@ fi
 # Crowdin -> Nuxeo update
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $FORMAT $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
+    update_nuxeo $PROJECT $LANG_EXT_ROOT/src/main/resources/web/nuxeo.war/WEB-INF/classes
 
     cd $LANG_EXT_ROOT
     git diff --quiet || {

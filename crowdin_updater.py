@@ -31,9 +31,8 @@ class CrowdinUpdater:
 
     The Crowdin API key must be set in the "CROWDIN_API_KEY" environment variable.
     """
-    def __init__(self, project, format=None):
+    def __init__(self, project):
         self.project = project
-        self.format = format
         if ENV_CROWDIN_API_KEY not in os.environ:
             raise ValueError('Missing Crowdin API key in environment, please set %s environment variable.'
                 % ENV_CROWDIN_API_KEY)
@@ -69,8 +68,8 @@ class CrowdinUpdater:
                             # making sure that filepath matches pattern <lang>/<parent>/<filename>
                             language = filepath.split('/')[0]
                             if os.path.dirname(filepath).replace(language, '').strip('/') == (parentdir.strip('/') if parentdir else ''):
-                                if self.format == 'json':
-                                    root, ext = os.path.splitext(filename)
+                                root, ext = os.path.splitext(filename)
+                                if ext == '.json':
                                     target_filename = '%s-%s%s' % (root, language, ext)
                                 else:
                                     target_filename = filename
@@ -126,7 +125,6 @@ class CrowdinUpdater:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('project', help='the Crowdin project name (mandatory)')
-    parser.add_argument('-F', dest='format', help='Crowdin project format, possible values: "json" only for now')
     parser.add_argument('--uc', dest='update_crowdin', action='store_true', help='Update Crowdin from Nuxeo')
     parser.add_argument('-f', dest='inputfile', help='Update file path')
     parser.add_argument('--un', dest='update_nuxeo', action='store_true', help='Update Nuxeo from Crowdin')
@@ -134,7 +132,7 @@ def main():
     parser.add_argument('-p', dest='parentdir', help='Crowdin parent folder')
     args = parser.parse_args()
 
-    cu = CrowdinUpdater(args.project, format=args.format)
+    cu = CrowdinUpdater(args.project)
     if args.update_crowdin:
         cu.upload(args.inputfile, parentdir=args.parentdir)
     if args.update_nuxeo:

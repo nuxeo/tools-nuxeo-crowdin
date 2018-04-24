@@ -13,7 +13,6 @@
 # - PROJECT_PATH: The local project path (./nuxeo-web-ui by default)
 # - INPUT_FILE: The input reference file (./nuxeo-web-ui/app/i18n/messages.json)
 # - OUTPUT_FOLDER: The output folder to which translations will be downloaded (./nuxeo-web-ui/app/i18n by default)
-# - FORMAT: Crowdin project format (json by default)
 # - KEY: Crowdin project API key
 # - BRANCH: Nuxeo Web UI branch to work (master by default, see commons.sh)
 # - COMMIT_BRANCH: if not blank, branch to work on, created from $BRANCH
@@ -48,9 +47,6 @@ fi
 if [ -z ${OUTPUT_FOLDER+x} ]; then
     OUTPUT_FOLDER=$PROJECT_PATH/app/i18n
 fi
-if [ -z ${FORMAT+x} ]; then
-    FORMAT="json"
-fi
 if [ -z ${CROWDIN_PARENT_FOLDER+x} ]; then
     CROWDIN_PARENT_FOLDER=""
 fi
@@ -72,7 +68,7 @@ fi
 # Crowdin -> Nuxeo Web UI
 #
 if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
-    update_nuxeo $PROJECT $FORMAT $OUTPUT_FOLDER $CROWDIN_PARENT_FOLDER
+    update_nuxeo $PROJECT $OUTPUT_FOLDER $CROWDIN_PARENT_FOLDER
 
     cd $PROJECT_PATH
     git diff --quiet || {
