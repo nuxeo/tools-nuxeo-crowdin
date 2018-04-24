@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# coding: utf-8
 """
 Handles download/push from/to Crowdin.
 
@@ -12,9 +12,14 @@ Options:
     See other options below (TODO)
 """
 
-import string, sys, os, shutil, zipfile, gzip, requests, argparse
-from StringIO import StringIO
+import argparse
+import os
+import requests
+import shutil
+import zipfile
 from xml.dom import minidom
+
+from StringIO import StringIO
 
 ENV_CROWDIN_API_KEY = 'CROWDIN_API_KEY'
 
@@ -50,7 +55,7 @@ class CrowdinUpdater:
             self.build()
         # download translations
         params = {'key': self.key}
-        r = requests.get('https://api.crowdin.com/api/project/%s/download/%s.zip' %(self.project, package), params=params, verify=False)
+        r = requests.get('https://api.crowdin.com/api/project/%s/download/%s.zip' %(self.project, package), params=params)
         res = self.parseXMLResponse(r)
         if res[0] == -2:
             # consider it's the zip response

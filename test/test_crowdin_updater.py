@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-
+# coding: utf-8
 import os
 import unittest
-from nose.tools import assert_equal, assert_true
+
 from crowdin_updater import CrowdinUpdater
-from tempfile import mkstemp
+
 
 class test_crowding_updater(unittest.TestCase):
 

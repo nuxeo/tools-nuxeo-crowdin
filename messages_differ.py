@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# coding: utf-8
 """
 Handles diff of a tree of messages files
 """
 
-import os, StringIO, ConfigParser
+import ConfigParser
+import StringIO
+import os
+
 
 class Differ:
     """

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# coding: utf-8
 """
 Handles default configuration of aggregates for the Nuxeo default modules and main addons.
 
@@ -15,7 +15,9 @@ Options:
         Only handle ext languages (default: handle only en messages)
 """
 
-import sys, os, argparse
+import argparse
+import os
+
 from messages_manager import Aggregate, AggregatesParser, MessagesManager
 
 MAIN_LANG_MODULE_PATH = 'nuxeo-features/nuxeo-platform-lang'
