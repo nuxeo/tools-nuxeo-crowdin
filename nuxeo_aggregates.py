@@ -18,8 +18,8 @@ Options:
 import sys, os, argparse
 from messages_manager import Aggregate, AggregatesParser, MessagesManager
 
-MAIN_LANG_MODULE_PATH = 'nuxeo-features/nuxeo-platform-lang'
-EXT_LANG_MODULE_PATH = 'addons/nuxeo-platform-lang-ext'
+MAIN_LANG_MODULE_PATH = 'modules/platform/nuxeo-platform-lang'
+EXT_LANG_MODULE_PATH = 'modules/platform/nuxeo-platform-lang-ext'
 
 DEFAULT_LANGS = {
     "en_US": ("messages.properties", ""),
