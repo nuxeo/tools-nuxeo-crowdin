@@ -86,9 +86,9 @@ function git_status() {
 function git_push() {
     if [ $DO_PUSH = true ]; then
         if [ ! -z $COMMIT_BRANCH ]; then
-            git push origin $COMMIT_BRANCH $DRYRUN_CMD
+            git push origin HEAD:$COMMIT_BRANCH $DRYRUN_CMD
         else
-            git push origin $BRANCH $DRYRUN_CMD
+            git push origin HEAD:$BRANCH $DRYRUN_CMD
         fi
     fi
 }
