@@ -43,7 +43,7 @@ fi
 HERE=`pwd`
 SCRIPT_PATH="`dirname \"$0\"`"
 NUXEO_PATH=./nuxeo
-LANG_EXT_ROOT=$NUXEO_PATH/addons/nuxeo-platform-lang-ext
+LANG_EXT_ROOT=$NUXEO_PATH/modules/platform/nuxeo-platform-lang-ext
 
 # Include common variables and functions
 source $SCRIPT_PATH/common.sh
@@ -63,11 +63,6 @@ fi
 if [ -z ${UPDATE_NUXEO_FROM_CROWDIN+x} ]; then
     UPDATE_NUXEO_FROM_CROWDIN=false
 fi
-
-# clone all addons
-cd $NUXEO_PATH
-./clone.py $BRANCH
-cd $HERE
 
 #
 # Nuxeo -> Crowdin update
