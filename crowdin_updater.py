@@ -17,6 +17,7 @@ from StringIO import StringIO
 from xml.dom import minidom
 
 ENV_CROWDIN_API_KEY = 'CROWDIN_API_KEY'
+ENV_CROWDIN_USER = 'CROWDIN_USER'
 
 
 class CrowdinUpdater:
@@ -33,9 +34,14 @@ class CrowdinUpdater:
             raise ValueError('Missing Crowdin API key in environment, please set %s environment variable.'
                 % ENV_CROWDIN_API_KEY)
         self.key = os.environ[ENV_CROWDIN_API_KEY].strip()
+        if ENV_CROWDIN_USER  in os.environ:
+            self.login = os.environ[ENV_CROWDIN_USER].strip()
 
     def build(self):
-        params = {'key': self.key}
+        if self.login:
+            params = { 'login': self.login , 'account-key': self.key}
+        else:
+            params = { 'key': self.key }
         r = requests.get('https://api.crowdin.com/api/project/%s/export' %(self.project,), params=params)
         res = self.parseXMLResponse(r)
         if res[0] < 0:
@@ -49,7 +55,10 @@ class CrowdinUpdater:
             # build first to make sure translations are up to date
             self.build()
         # download translations
-        params = {'key': self.key}
+        if self.login:
+            params = { 'login': self.login , 'account-key': self.key}
+        else:
+            params = { 'key': self.key }
         r = requests.get('https://api.crowdin.com/api/project/%s/download/%s.zip' %(self.project, package), params=params, verify=False)
         res = self.parseXMLResponse(r)
         if res[0] == -2:
@@ -84,7 +93,11 @@ class CrowdinUpdater:
         files = {
             'files[%s]' % os.path.join(parentdir or '', os.path.basename(inputfile)): open(inputfile, 'rb')
         }
-        r = requests.post('https://api.crowdin.com/api/project/%s/update-file?key=%s' %(self.project, self.key), data=data, files=files)
+        if self.login:
+            params = { 'login': self.login , 'account-key': self.key}
+        else:
+            params = { 'key': self.key }
+        r = requests.post('https://api.crowdin.com/api/project/%s/update-file?' %(self.project), params=params, data=data, files=files)
         res = self.parseXMLResponse(r)
         if res[0] <= 0:
             raise ValueError('Upload failed: %s' % res[1])
