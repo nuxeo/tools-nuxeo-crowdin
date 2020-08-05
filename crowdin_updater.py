@@ -36,6 +36,8 @@ class CrowdinUpdater:
         self.key = os.environ[ENV_CROWDIN_API_KEY].strip()
         if ENV_CROWDIN_USER  in os.environ:
             self.login = os.environ[ENV_CROWDIN_USER].strip()
+        else:
+            self.login = None
 
     def build(self):
         if self.login:
