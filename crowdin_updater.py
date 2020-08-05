@@ -39,9 +39,9 @@ class CrowdinUpdater:
 
     def build(self):
         if self.login:
-            params = { 'login': self.login , 'account-key': self.key}
+            params = {'login': self.login , 'account-key': self.key}
         else:
-            params = { 'key': self.key }
+            params = {'key': self.key}
         r = requests.get('https://api.crowdin.com/api/project/%s/export' %(self.project,), params=params)
         res = self.parseXMLResponse(r)
         if res[0] < 0:
@@ -56,9 +56,9 @@ class CrowdinUpdater:
             self.build()
         # download translations
         if self.login:
-            params = { 'login': self.login , 'account-key': self.key}
+            params = {'login': self.login , 'account-key': self.key}
         else:
-            params = { 'key': self.key }
+            params = {'key': self.key}
         r = requests.get('https://api.crowdin.com/api/project/%s/download/%s.zip' %(self.project, package), params=params, verify=False)
         res = self.parseXMLResponse(r)
         if res[0] == -2:
@@ -94,9 +94,9 @@ class CrowdinUpdater:
             'files[%s]' % os.path.join(parentdir or '', os.path.basename(inputfile)): open(inputfile, 'rb')
         }
         if self.login:
-            params = { 'login': self.login , 'account-key': self.key}
+            params = {'login': self.login , 'account-key': self.key}
         else:
-            params = { 'key': self.key }
+            params = {'key': self.key}
         r = requests.post('https://api.crowdin.com/api/project/%s/update-file?' %(self.project), params=params, data=data, files=files)
         res = self.parseXMLResponse(r)
         if res[0] <= 0:
