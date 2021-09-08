@@ -75,7 +75,6 @@ if [ $UPDATE_CROWDIN_FROM_NUXEO = true ]; then
     git diff --quiet || {
         echo "Spotted changes on reference messages file"
         git_create_branch
-        mvn clean verify
         git_commit "Automatic merge of reference messages for Crowdin"
         # send to Crowdin
         cd $HERE
@@ -94,7 +93,6 @@ if [ $UPDATE_NUXEO_FROM_CROWDIN = true ]; then
     git diff --quiet || {
         echo "Spotted changes on ext messages files"
         git_create_branch
-        mvn clean verify
         git_commit "Automatic update of messages from Crowdin"
     }
     git_status
